@@ -18,6 +18,16 @@ register_definition() {
   fi
 }
 
+
+# new
+update_service() {
+  if [[ $(aws ecs update-service --cluster $cluster --service $service --task-definition $revision | $JQ '.service.taskDefinition') != $revision ]]; then
+    echo "Error updating service."
+    return 1
+  fi
+}
+
+
 deploy_cluster() {
 
   echo "Deploying cluster"
@@ -36,14 +46,6 @@ deploy_cluster() {
   echo "$task_def"
   register_definition
   update_service  # new
-}
-
-# new
-update_service() {
-  if [[ $(aws ecs update-service --cluster $cluster --service $service --task-definition $revision | $JQ '.service.taskDefinition') != $revision ]]; then
-    echo "Error updating service."
-    return 1
-  fi
 }
 
 
